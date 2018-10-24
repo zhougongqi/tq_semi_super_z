@@ -72,10 +72,10 @@ if __name__ == "__main__":
 
     # show tsne graph
     # ndvi_h = reduce_feature(hard, n_bands)
-    plt.plot(hard[1, :])
-    plt.show()
+    # plt.plot(hard[1, :])
+    # plt.show()
 
-    show_tsne.show_tsne(hard, hard_label)
+    # show_tsne.show_tsne(hard, hard_label)
 
     # # delete other class
     # all_hard = np.hstack((hard, hard_label.reshape(hard_label.shape[0], -1)))

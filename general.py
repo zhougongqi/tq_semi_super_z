@@ -9,6 +9,19 @@ from sklearn.metrics import confusion_matrix
 from sklearn.metrics import classification_report
 
 
+def load_data(data_path: str):
+    try:
+        features_data = np.load(data_path)["features"]
+        label_data = np.load(data_path)["labels"]
+        print(features_data.shape)
+        print(label_data.shape)
+    except Exception as e:
+        logger.error("load ori-data failed!".center(40, "!"))
+        return None
+
+    return features_data, label_data
+
+
 def data_shuffle(data: np.ndarray) -> np.ndarray:
     """
     shuffle 2-D data along rows
@@ -23,7 +36,7 @@ def split_data(data: np.ndarray, proportion: float):
     """
     split colomn direction into two parts: train and test. 
     """
-    assert 0 < proportion < 1, "proportion must be in (0,1)"
+    assert 0 < proportion <= 1, "proportion must be in (0,1)"
     row, col = data.shape
     pp_idx = int(row * proportion)
     train = data[0:pp_idx, :]
@@ -65,20 +78,42 @@ def reduce_feature(data, bands):
     return dout
 
 
-def reduce_feature_ndvi(data, bands):
+def reduce_feature_ndvi(data, bands, step):
     row, col = data.shape
     icol = col / bands
     d = data[0, :]
     d = d.reshape(bands, -1)
-    ds = d[:, 0::7]
+    ds = d[:, 0::step]
     ds = (ds[3, :] - ds[2, :]) / (ds[3, :] + ds[2, :])
     ds = ds.flatten()
     dout = ds
     for r in range(1, row):
         d = data[r, :]
         d = d.reshape(bands, -1)
-        ds = d[:, 0::7]
+        ds = d[:, 0::step]
         ds = (ds[3, :] - ds[2, :]) / (ds[3, :] + ds[2, :])
+        ds = ds.flatten()
+        dout = np.vstack((dout, ds.flatten()))
+        print_progress_bar(r, row)
+    print(" ")
+    print("reduced shape:", dout.shape)
+    return dout
+
+
+def reduce_feature_ndwi(data, bands, step):
+    row, col = data.shape
+    icol = col / bands
+    d = data[0, :]
+    d = d.reshape(bands, -1)
+    ds = d[:, 0::step]
+    ds = (ds[1, :] - ds[3, :]) / (ds[1, :] + ds[3, :])
+    ds = ds.flatten()
+    dout = ds
+    for r in range(1, row):
+        d = data[r, :]
+        d = d.reshape(bands, -1)
+        ds = d[:, 0::step]
+        ds = (ds[1, :] - ds[3, :]) / (ds[1, :] + ds[3, :])
         ds = ds.flatten()
         dout = np.vstack((dout, ds.flatten()))
         print_progress_bar(r, row)
@@ -97,6 +132,20 @@ def delete_label(data, useless_labels: list):
             # l = data[r, col - 1]
             # if l in useless_labels:
             #     d = np.delete(d, r, 0)
+    return d
+
+
+def keep_label(data, label, useful_labels: list):
+    """
+    inverse version of delete_label()
+    """
+    d = data
+    row, col = data.shape
+    idx = []
+    for r in range(row):
+        if label[r] in useful_labels:
+            idx.append(r)
+    d = data[idx, :]
     return d
 
 

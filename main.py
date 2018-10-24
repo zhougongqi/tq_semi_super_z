@@ -19,9 +19,7 @@ from sklearn.decomposition import PCA
 
 
 if __name__ == "__main__":
-    """
-    ######################  psuedo label #################################################
-    """
+
     # Preprocess the data
     train = pd.read_csv(
         # "/home/tq/zgq/zdata/crop-class/zgq/reduced/mississipi-allhard-reduced.csv"
@@ -47,35 +45,5 @@ if __name__ == "__main__":
     y_train = train[target]
     y_vali = vali[target]
     y_vali = np.array(y_vali.tolist())
-
-    model = PseudoLabeler(XGBRegressor(), test, features, target)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_test)
-    y_pred_r = y_pred
-    for i in range(y_pred.shape[0]):
-        if y_pred[i] > 3 and y_pred[i] < 4.5:
-            y_pred_r[i] = 3
-        elif y_pred[i] > 4.5 and y_pred[i] < 6:
-            y_pred_r[i] = 6
-        elif y_pred[i] > 6:
-            y_pred_r[i] = 6
-        elif y_pred[i] < 0:
-            y_pred_r[i] = 0
-        else:
-            y_pred_r[i] = round(y_pred[i])
-
-    cm = confusion_matrix(y_vali, y_pred_r)
-    cm_plot(y_vali, y_pred_r).show()
-
-    print(
-        classification_report(
-            y_vali,
-            y_pred_r,
-            labels=None,
-            target_names=None,
-            sample_weight=None,
-            digits=2,
-        )
-    )
 
     test = 1

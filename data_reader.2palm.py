@@ -78,46 +78,6 @@ if __name__ == "__main__":
 
     show_tsne.show_tsne(hard, hard_label)
 
-    # save csv
-    all_hard_list = all_hard.tolist()
-    soft_list = soft.tolist()
-    soft_label_list = soft_label.tolist()
-    header = ["y"]
-    header_soft = []
-    header_soft_label = ["y", "y2"]
-    for i in range(all_hard.shape[1] - 1):
-        header.append("x_" + str(i + 1))
-        header_soft.append("x_" + str(i + 1))
-
-    with open(
-        "/home/tq/zgq/zdata/crop-class/zgq/reduced/mississipi-allhard-reduced.csv",
-        "w",
-        newline="",
-    ) as f:
-        writer = csv.writer(f)
-        writer.writerows([header])
-        writer.writerows(all_hard_list)
-        f.close()
-
-    with open(
-        "/home/tq/zgq/zdata/crop-class/zgq/reduced/mississipi-soft-reduced.csv",
-        "w",
-        newline="",
-    ) as f:
-        writer = csv.writer(f)
-        writer.writerows([header_soft])
-        writer.writerows(soft)
-        f.close()
-
-    with open(
-        "/home/tq/zgq/zdata/crop-class/zgq/reduced/mississipi-soft-label-reduced.csv",
-        "w",
-        newline="",
-    ) as f:
-        writer = csv.writer(f)
-        writer.writerows([header_soft_label])
-        writer.writerows(soft_label_list)
-        f.close()
     # np.savetxt(
     #     "/home/tq/zgq/zdata/crop-class/zgq/mississipi-allhard.csv",
     #     all_hard,
